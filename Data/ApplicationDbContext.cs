@@ -18,5 +18,22 @@ namespace web_project.Data
         {
             base.OnModelCreating(builder);
         }
+
+        // Category enum
+        public enum Category
+        {
+            Electronics = 1,
+            Home = 2,
+            Fashion = 3,
+            Sports = 4,
+            Other = 5
+        }
+
+        // Condition enum
+        public enum Condition
+        {
+            New = 1,
+            Used = 2
+        }
     }
 }

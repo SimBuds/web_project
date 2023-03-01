@@ -267,7 +267,7 @@ namespace web_project.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Auction");
+                    b.ToTable("Auction", (string)null);
                 });
 
             modelBuilder.Entity("web_project.Models.User", b =>

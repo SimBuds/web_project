@@ -16,23 +16,6 @@ namespace web_project.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        // Category enum
-        public enum Category
-        {
-            Electronics = 1,
-            Home = 2,
-            Fashion = 3,
-            Sports = 4,
-            Other = 5
-        }
-
-        // Condition enum
-        public enum Condition
-        {
-            New = 1,
-            Used = 2
-        }
-
         public AuctionsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
@@ -76,20 +59,15 @@ namespace web_project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition")] Auction auction)
         {
-            // Set the user id
-            auction.UserId = _userManager.GetUserId(User);
+            ModelState.Clear();
 
             // Set the start date
             auction.StartDate = DateTime.Now;
 
-            Console.WriteLine(auction.Category.GetType());
+            // Set the user id
+            auction.UserId = _userManager.GetUserId(User);
 
-
-            Console.WriteLine(auction.Condition.GetType());
-
-            Console.WriteLine(ModelState.IsValid);
-
-            // Validate the model
+            // Check if the model is valid
             if (ModelState.IsValid)
             {
                 _context.Add(auction);
@@ -98,6 +76,7 @@ namespace web_project.Controllers
             }
             return View(auction);
         }
+
 
         // GET: Auctions/Edit
         [Authorize]
@@ -120,16 +99,14 @@ namespace web_project.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition")] Auction auction)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition")] Auction auction)
         {
             if (id != auction.Id)
             {
                 return NotFound();
             }
 
-            // Assigns the the startdate and userid to the auction object
-            auction.StartDate = _context.Auction.Where(a => a.Id == id).Select(a => a.StartDate).FirstOrDefault();
-            auction.UserId = _context.Auction.Where(a => a.Id == id).Select(a => a.UserId).FirstOrDefault();
+            ModelState.Clear();
 
             if (ModelState.IsValid)
             {
