@@ -1,13 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web_project.Data;
 using web_project.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+
 
 namespace web_project.Controllers
 {
@@ -82,14 +79,14 @@ namespace web_project.Controllers
 
         // GET: Auctions/Edit
         [Authorize]
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var auction = await _context.Auction.FindAsync(id);
+            var auction = _context.Auction.Find(id);
             if (auction == null)
             {
                 return NotFound();
@@ -107,6 +104,8 @@ namespace web_project.Controllers
             {
                 return NotFound();
             }
+            
+            auction.UserId = _userManager.GetUserId(User);
 
             if (ModelState.IsValid)
             {
