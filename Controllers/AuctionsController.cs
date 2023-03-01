@@ -162,47 +162,25 @@ namespace web_project.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Auctions/AuctionExists
+        // Built-in Search
         private bool AuctionExists(int id)
         {
             return _context.Auction.Any(e => e.Id == id);
         }
 
-        // GET: Auctions/Search
-        public IActionResult Search()
-        {
-            return View();
-        }
-
-        // POST: Auctions/SearchResults
+        // POST: Auctions/SearchBar
         [HttpPost]
-        public IActionResult SearchResults(string SearchQuery)
+        public async Task<IActionResult> SearchBar(string SearchString)
         {
-            var auctions = _context.Auction.Where(a => a.Name.Contains(SearchQuery) || a.Description.Contains(SearchQuery)).ToList();
-            return View("Index", auctions);
-        }
+            var auctions = from m in _context.Auction
+                           select m;
 
-        // GET: Auctions/Searchss
-        [HttpPost]
-        public async Task<IActionResult> Searchss(string searchString)
-        {
-            var auctions = from a in _context.Auction
-                           select a;
-
-            if (!String.IsNullOrEmpty(searchString))
+            if (!String.IsNullOrEmpty(SearchString))
             {
-                auctions = auctions.Where(a => a.Name.Contains(searchString));
+                auctions = auctions.Where(s => s.Name.Contains(SearchString));
             }
 
-            return View(await auctions.ToListAsync());
-        }
-
-        // GET: Auctions/MyAuctions
-        [Authorize]
-        public IActionResult MyAuctions()
-        {
-            var auctions = _context.Auction.Where(a => a.UserId == _userManager.GetUserId(User)).ToList();
-            return View("Index", auctions);
+            return View("Index", await auctions.ToListAsync());
         }
     }
 }
