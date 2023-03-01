@@ -12,8 +12,8 @@ using web_project.Data;
 namespace web_project.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230301175842_SecondAdjustments")]
-    partial class SecondAdjustments
+    [Migration("20230301201748_SecondAdjustment")]
+    partial class SecondAdjustment
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -341,13 +341,11 @@ namespace web_project.Data.Migrations
 
             modelBuilder.Entity("web_project.Models.Auction", b =>
                 {
-                    b.HasOne("web_project.Models.User", "User")
+                    b.HasOne("web_project.Models.User", null)
                         .WithMany("Auctions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("web_project.Models.User", b =>

@@ -4,7 +4,7 @@
 
 namespace web_project.Data.Migrations
 {
-    public partial class SecondAdjustments : Migration
+    public partial class SecondAdjustment : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

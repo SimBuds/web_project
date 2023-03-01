@@ -52,7 +52,7 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageUrl)
+                    <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" class="list-group-item card-img" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartingPrice)

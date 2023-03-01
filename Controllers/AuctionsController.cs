@@ -7,7 +7,7 @@ using web_project.Data;
 using web_project.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-
+using System.Security.Claims;
 
 namespace web_project.Controllers
 {
@@ -16,11 +16,13 @@ namespace web_project.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public AuctionsController(ApplicationDbContext context, UserManager<User> userManager)
+        public AuctionsController(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _context = context;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: Auctions
@@ -58,17 +60,23 @@ namespace web_project.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name,Description,ImageUrl,StartingPrice,Category,Condition")] Auction auction)
+        public async Task<IActionResult> Create([Bind("Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition,UserId")] Auction auction)
         {
-            if (ModelState.IsValid)
+
+            if (!User.Identity.IsAuthenticated)
             {
-                auction.UserId = _userManager.GetUserId(User);
-                auction.EndDate = DateTime.Now.AddDays(7);
-                _context.Auction.Add(auction);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Login", "Account");
             }
 
+            auction.StartDate = DateTime.Now;
+            auction.UserId = _userManager.GetUserId(User);
+            
+            if (ModelState.IsValid)
+            {
+                _context.Add(auction);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
             return View(auction);
         }
 
@@ -93,7 +101,7 @@ namespace web_project.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition")] Auction auction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageUrl,StartingPrice,StartDate,EndDate,Category,Condition,UserId")] Auction auction)
         {
             if (id != auction.Id)
             {

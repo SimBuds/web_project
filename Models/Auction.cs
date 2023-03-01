@@ -6,6 +6,7 @@ namespace web_project.Models
 {
     public class Auction
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -23,6 +24,7 @@ namespace web_project.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal StartingPrice { get; set; }
 
+        [Required]
         public DateTime StartDate { get; set; }
 
         [Required]
@@ -36,8 +38,6 @@ namespace web_project.Models
 
         [ForeignKey("UserId")]
         public string UserId { get; set; }
-        public User User { get; set; }
-
 
         public Auction() { }
     }
