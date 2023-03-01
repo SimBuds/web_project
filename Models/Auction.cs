@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Composition;
 
 namespace web_project.Models
 {
@@ -14,10 +15,12 @@ namespace web_project.Models
         public string Description { get; set; }
 
         [Required]
+        [DataType(DataType.ImageUrl)]
         public string ImageUrl { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(18,4)")]
+        [Range(0, double.MaxValue)]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal StartingPrice { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -26,13 +29,15 @@ namespace web_project.Models
         public DateTime EndDate { get; set; }
 
         [Required]
-        public int Category { get; set; }
+        public Category Category { get; set; }
 
         [Required]
-        public int Condition { get; set; }
+        public Condition Condition { get; set; }
 
         [ForeignKey("UserId")]
         public string UserId { get; set; }
+        public User User { get; set; }
+
 
         public Auction() { }
     }

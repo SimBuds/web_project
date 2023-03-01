@@ -19,7 +19,11 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
+    options.Password.RequiredLength = 8;
+    options.Password.RequireDigit = true;
+    options.Password.RequireUppercase = true;
     options.User.RequireUniqueEmail = true;
+
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders().AddDefaultUI();
@@ -49,9 +53,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapRazorPages();
+});
 
 app.Run();

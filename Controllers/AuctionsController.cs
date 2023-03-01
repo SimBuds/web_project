@@ -13,6 +13,7 @@ namespace web_project.Controllers
 {
     public class AuctionsController : Controller
     {
+
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
 
@@ -57,26 +58,19 @@ namespace web_project.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition")] Auction auction)
+        public ActionResult Create([Bind(Include = "Name,Description,ImageUrl,StartingPrice,Category,Condition")] Auction auction)
         {
-            ModelState.Clear();
-
-            // Set the start date
-            auction.StartDate = DateTime.Now;
-
-            // Set the user id
-            auction.UserId = _userManager.GetUserId(User);
-
-            // Check if the model is valid
             if (ModelState.IsValid)
             {
-                _context.Add(auction);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                auction.UserId = _userManager.GetUserId(User);
+                auction.EndDate = DateTime.Now.AddDays(7);
+                _context.Auction.Add(auction);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
+
             return View(auction);
         }
-
 
         // GET: Auctions/Edit
         [Authorize]
@@ -105,8 +99,6 @@ namespace web_project.Controllers
             {
                 return NotFound();
             }
-
-            ModelState.Clear();
 
             if (ModelState.IsValid)
             {
@@ -162,7 +154,7 @@ namespace web_project.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Auction Search
+        // GET: Auctions/AuctionExists
         private bool AuctionExists(int id)
         {
             return _context.Auction.Any(e => e.Id == id);
@@ -180,6 +172,21 @@ namespace web_project.Controllers
         {
             var auctions = _context.Auction.Where(a => a.Name.Contains(SearchQuery) || a.Description.Contains(SearchQuery)).ToList();
             return View("Index", auctions);
+        }
+
+        // GET: Auctions/Searchss
+        [HttpPost]
+        public async Task<IActionResult> Searchss(string searchString)
+        {
+            var auctions = from a in _context.Auction
+                           select a;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                auctions = auctions.Where(a => a.Name.Contains(searchString));
+            }
+
+            return View(await auctions.ToListAsync());
         }
 
         // GET: Auctions/MyAuctions

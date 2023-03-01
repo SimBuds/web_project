@@ -1,39 +1,42 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using web_project.Models;
 
 namespace web_project.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
-
         public DbSet<Models.Auction> Auction { get; set; }
         public DbSet<Models.User> User { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
-            base.OnModelCreating(builder);
+
         }
 
-        // Category enum
-        public enum Category
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Electronics = 1,
-            Home = 2,
-            Fashion = 3,
-            Sports = 4,
-            Other = 5
-        }
+            base.OnModelCreating(modelBuilder);
 
-        // Condition enum
-        public enum Condition
-        {
-            New = 1,
-            Used = 2
+            // Configure the Auction entity
+            modelBuilder.Entity<Auction>()
+                .Property(a => a.Category)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<Auction>()
+                .Property(a => a.Condition)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<Auction>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Auctions)
+                .HasForeignKey(a => a.UserId);
+
+            // Configure the User entity
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<int>();
         }
     }
 }
