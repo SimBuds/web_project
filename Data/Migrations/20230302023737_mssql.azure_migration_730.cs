@@ -4,7 +4,7 @@
 
 namespace web_project.Data.Migrations
 {
-    public partial class mssqlazure_migration_880 : Migration
+    public partial class mssqlazure_migration_730 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
