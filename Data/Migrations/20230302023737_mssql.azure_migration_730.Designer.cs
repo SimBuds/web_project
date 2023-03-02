@@ -12,8 +12,8 @@ using web_project.Data;
 namespace web_project.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230302071724_mssql.azure_migration_880")]
-    partial class mssqlazure_migration_880
+    [Migration("20230302023737_mssql.azure_migration_730")]
+    partial class mssqlazure_migration_730
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
