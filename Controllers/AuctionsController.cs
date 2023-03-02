@@ -4,7 +4,7 @@ using web_project.Data;
 using web_project.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace web_project.Controllers
 {
@@ -13,13 +13,11 @@ namespace web_project.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
-        public AuctionsController(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuctionsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         // GET: Auctions
@@ -59,12 +57,6 @@ namespace web_project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,ImageUrl,StartingPrice,EndDate,Category,Condition,UserId")] Auction auction)
         {
-
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
             auction.StartDate = DateTime.Now;
             auction.UserId = _userManager.GetUserId(User);
             
@@ -177,6 +169,83 @@ namespace web_project.Controllers
             if (!String.IsNullOrEmpty(SearchString))
             {
                 auctions = auctions.Where(s => s.Name.Contains(SearchString));
+            }
+
+            return View("Index", await auctions.ToListAsync());
+        }
+
+        // POST: Auctions/Category
+        // Display Specific Categories
+        [HttpPost]
+        public async Task<IActionResult> CategorySort(int CategorySelection)
+        {
+            var auctions = from m in _context.Auction
+                           select m;
+
+            if (CategorySelection == 0)
+            {
+                auctions = auctions.Where(s => s.Category == Category.Electronics);
+            }
+            else if (CategorySelection == 1)
+            {
+                auctions = auctions.Where(s => s.Category == Category.Fashion);
+            }
+            else if (CategorySelection == 2)
+            {
+                auctions = auctions.Where(s => s.Category == Category.Home);
+            }
+            else if (CategorySelection == 3)
+            {
+                auctions = auctions.Where(s => s.Category == Category.Sports);
+            }
+            else if (CategorySelection == 4)
+            {
+                auctions = auctions.Where(s => s.Category == Category.Books);
+            }
+            else if (CategorySelection == 5)
+            {
+                auctions = auctions.Where(s => s.Category == Category.Other);
+            }
+
+            return View("Index", await auctions.ToListAsync());
+        }
+
+        // POST: Auctions/Condition
+        // Display Specific Conditions
+        [HttpPost]
+        public async Task<IActionResult> ConditionSort(int ConditionSelection)
+        {
+            var auctions = from m in _context.Auction
+                           select m;
+
+            if (ConditionSelection == 0)
+            {
+                auctions = auctions.Where(s => s.Condition == Condition.New);
+
+            }
+            else
+            {
+                auctions = auctions.Where(s => s.Condition == Condition.Used);
+            }
+
+            return View("Index", await auctions.ToListAsync());
+        }
+
+        // POST: Auctions/Price
+        // Display Specific Price Ranges high to low
+        [HttpPost]
+        public async Task<IActionResult> PriceSort(int PriceSelection)
+        {
+            var auctions = from m in _context.Auction
+                           select m;
+
+            if (PriceSelection == 1)
+            {
+                auctions = auctions.OrderByDescending(s => s.StartingPrice);
+            }
+            else
+            {
+                auctions = auctions.OrderBy(s => s.StartingPrice);
             }
 
             return View("Index", await auctions.ToListAsync());

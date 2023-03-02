@@ -6,45 +6,53 @@
 
 <h2>Auctions List</h2>
 
-
-<form asp-action="SearchBar" enctype="multipart/form-data" class="form-inline">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="flex-fill">
+    <form asp-action="SearchBar" class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input class="form-control mr-sm-2" type="search" name="SearchString" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+    <form asp-action="CategorySort" class="form-horizontal">
+        <select class="form-control" name="CategorySelection">
+            <option value="">Select a category</option>
+            <option value="0">Electronics</option>
+            <option value="1">Fashion</option>
+            <option value="2">Home</option>
+            <option value="3">Sports</option>
+            <option value="4">Books</option>
+            <option value="5">Other</option>
+        </select>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sort</button>
+    </form>
+<form asp-action="ConditionSort" class="form-horizontal">
+        <select class="form-control" name="ConditionSelection">
+            <option value="">Select a condition</option>
+            <option value="0">New</option>
+            <option value="1">Used</option>
+        </select>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sort</button>
 </form>
-
+<form asp-action="PriceSort" class="form-horizontal">
+        <select class="form-control" name="PriceSelection">
+            <option value="">Select a price</option>
+            <option value="0">Low to High</option>
+            <option value="1">High to Low</option>
+        </select>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sort</button>
+</form>
+</div>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartingPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Condition)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th></th>
+            <th>Name:</th>
+            <th>Description:</th>
+            <th>Image:</th>
+            <th>Starting Price:</th>
+            <th>Start Date:</th>
+            <th>End Date:</th>
+            <th>Category:</th>
+            <th>Condition:</th>
         </tr>
     </thead>
     <tbody>
@@ -57,7 +65,9 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                    <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" class="list-group-item card-img" />
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" class="img-thumbnail" />
+                </a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartingPrice)
@@ -73,14 +83,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Condition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
